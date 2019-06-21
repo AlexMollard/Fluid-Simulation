@@ -1,0 +1,8 @@
+﻿  GridManager.cpp
+c:\users\alexm\desktop\programming\water sim\project2d\gridmanager.cpp(91): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\alexm\desktop\programming\water sim\project2d\gridmanager.cpp(92): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\alexm\desktop\programming\water sim\project2d\gridmanager.cpp(100): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\alexm\desktop\programming\water sim\project2d\gridmanager.cpp(101): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\alexm\desktop\programming\water sim\project2d\gridmanager.cpp(257): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\alexm\desktop\programming\water sim\project2d\gridmanager.cpp(247): warning C4715: 'GridManager::GetCellType': not all control paths return a value
+  Project2D.vcxproj -> C:\Users\alexm\Desktop\Programming\Water Sim\temp\Project2D\x64\Debug\Project2D.exe
