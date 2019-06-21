@@ -7,7 +7,6 @@ Cell::Cell()
 {
 	// Initializing variables
 	_Alive = true;
-	_DeathRow = false;
 	_R = 0.0f;
 	_G = 0.0f;
 	_B = 0.0f;
@@ -18,6 +17,7 @@ Cell::Cell()
 	_Timer = 0;
 	_Wall = false;
 	_ChangeType = 0;
+	_WaterTotal = 0;
 }
 
 void Cell::Draw(aie::Renderer2D* renderer)
@@ -45,21 +45,14 @@ void Cell::Update(float DeltaTime, aie::Input* input)
 		_G = 0.4f;
 		_B = 0.4f;
 	}
-	else if (_Alive && _Type == 2)	// Liquid 1
+	else if (_Alive && _Type == 2)	// Water
 	{
 		_R = 0.2f;
 		_G = 0.2f;
 		_B = 0.85f;
+		_WaterTotal = 0.75;
 	}
-	else if (_Alive && _Type == 3)	// Liquid 2
-	{
-		_R = 0.0f;
-		_G = 0.0f;
-		_B = 0.0f;
-	}
-	
-	// If the cell is dead make it black
-	if (!_Alive && !_Wall)
+	else if (_Alive && _Type == 3)	// Empty
 	{
 		_R = 0.0f;
 		_G = 0.0f;
@@ -69,33 +62,27 @@ void Cell::Update(float DeltaTime, aie::Input* input)
 
 void Cell::MouseOver(aie::Input* input)
 {
-	// Save Cell
+	// Solid Cell
 	if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_LEFT))
 	{
-		if (_Timer > 0.5)
+		if (input->getMouseX() >= _CellX - (_SizeX / 2) && input->getMouseX() <= _CellX + (_SizeX / 2) &&
+			input->getMouseY() >= _CellY - (_SizeY / 2) && input->getMouseY() <= _CellY + (_SizeY / 2))
 		{
-			if (input->getMouseX() >= _CellX - (_SizeX) && input->getMouseX() <= _CellX + (_SizeX) &&
-				input->getMouseY() >= _CellY - (_SizeY) && input->getMouseY() <= _CellY + (_SizeY))
-			{
-				_ChangeType += 1;
-				if (_ChangeType == 4)
-					_ChangeType = 1;
-			}
-			_Timer = 0;
-		}
-	}
-
-	// Kill Cell
-	if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_RIGHT))
-	{
-		if (_Timer > 0.5)
-		{
-			if (input->getMouseX() >= _CellX - (_SizeX / 2) && input->getMouseX() <= _CellX + (_SizeX / 2) &&
-				input->getMouseY() >= _CellY - (_SizeY / 2) && input->getMouseY() <= _CellY + (_SizeY / 2))
-			{
+			if (input->isKeyDown(aie::INPUT_KEY_LEFT_SHIFT))
 				_ChangeType = 3;
-			}
-			_Timer = 0;
+			else
+				_ChangeType = 1;
+		}
+	}// Water Cell
+	else if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_RIGHT))
+	{
+		if (input->getMouseX() >= _CellX - (_SizeX / 2) && input->getMouseX() <= _CellX + (_SizeX / 2) &&
+			input->getMouseY() >= _CellY - (_SizeY / 2) && input->getMouseY() <= _CellY + (_SizeY / 2))
+		{
+			if (input->isKeyDown(aie::INPUT_KEY_LEFT_SHIFT))
+				_ChangeType = 3;
+			else
+				_ChangeType = 2;
 		}
 	}
 }

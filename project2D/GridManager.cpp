@@ -88,8 +88,8 @@ void GridManager::Resize(float windowWidth, float windowHeight)
 		_WindowSizeY = windowHeight;
 
 		// Cell size
-		_CellSizeX = _WindowSizeX / _CellTotal / 2;
-		_CellSizeY = _WindowSizeY / _CellTotal / 2;
+		_CellSizeX = (_WindowSizeX * 0.90) / _CellTotal / 1.1;
+		_CellSizeY = (_WindowSizeY * 0.90) / _CellTotal / 1.1;
 
 		// Set all cells positions
 		for (int x = 0; x < _CellTotal; x++)
@@ -97,7 +97,7 @@ void GridManager::Resize(float windowWidth, float windowHeight)
 			for (int y = 0; y < _CellTotal; y++)
 			{
 				// Set Cell Position
-				_Cells[x][y].SetPos(x * _CellSizeX * 2 + _CellSizeX, y * _CellSizeY * 2 + _CellSizeY);
+				_Cells[x][y].SetPos(x * _CellSizeX * 1.1 + (_WindowSizeX * 0.05), y *_CellSizeY * 1.1 + (_WindowSizeY * 0.05));
 				_Cells[x][y].SetSize(_CellSizeX, _CellSizeY);
 			}
 		}
@@ -240,7 +240,12 @@ void GridManager::Draw(aie::Renderer2D* renderer)
 		for (int y = 0; y < _CellTotal; y++)
 		{
 			renderer->setRenderColour(_Cells[x][y].GetR(), _Cells[x][y].GetG(), _Cells[x][y].GetB());
-			renderer->drawBox(_Cells[x][y].GetX(), _Cells[x][y].GetY(), _CellSizeX, _CellSizeY);
+
+			if (_Cells[x][y].GetType() == 2 && !_Cells[x][y].GetWall())
+				renderer->drawBox(_Cells[x][y].GetX(), _Cells[x][y].GetY() + (_Cells[x][y].GetSizeY() * _Cells[x][y].GetWaterTotal()), _Cells[x][y].GetSizeX(), _Cells[x][y].GetSizeY() * _Cells[x][y].GetWaterTotal());  // Needs to be fixed
+			else
+				renderer->drawBox(_Cells[x][y].GetX(), _Cells[x][y].GetY(), _Cells[x][y].GetSizeX(), _Cells[x][y].GetSizeY());
+
 		}
 	}
 }

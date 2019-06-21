@@ -24,13 +24,13 @@ public:
 	bool GetSurvive()				{ return _Survive; };
 	void SetSurvive(bool Survive)	{ _Survive = Survive; };
 
-	// DeathRow Functions
-	bool GetDeathRow()				{ return _DeathRow; };
-	void SetDeathRow(bool death)	{ _DeathRow = death; };
-
 	// Wall Functions
 	bool GetWall()					{ return _Wall; };
 	void SetWall(bool Wall)			{ _Wall = Wall; };
+
+	// WaterFunctions
+	float GetWaterTotal()			{ return _WaterTotal; };
+	void SetWaterTotal(float Water)	{ _WaterTotal = Water; };
 
 	// Type Functions
 	int GetType()					{ return _Type; };
@@ -53,7 +53,6 @@ public:
 
 private:
 	// Next Generation Status
-	bool _DeathRow;
 	bool _Survive;
 	bool _Alive;
 
@@ -69,8 +68,14 @@ private:
 	float _R;
 	float _G;
 	float _B;
+
+	// Type Variables
 	int _Type;
 	int _ChangeType;
+								// Directions in int value
+	// Water Variables			//	1 2 3 
+	float _WaterTotal;			//  4 X 5
+	int _Direction;				//  6 7 8 
 
 	// Wall Variable
 	bool _Wall;
