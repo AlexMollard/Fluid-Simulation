@@ -119,14 +119,14 @@ void GridManager::CheckNeighbours(aie::Input* input, float deltaTime)
 				_Type3Neighbours = 0;
 
 				// Reset neighbours
-				TR	= _Wall;
-				TM	= _Wall;
-				TL	= _Wall;
-				MR	= _Wall;
-				ML	= _Wall;
-				BR	= _Wall;
-				BM	= _Wall;
-				BL	= _Wall;
+				TR	= nullptr;
+				TM	= nullptr;
+				TL	= nullptr;
+				MR	= nullptr;
+				ML	= nullptr;
+				BR	= nullptr;
+				BM	= nullptr;
+				BL	= nullptr;
 
 				// Reset neighbours types
 				_TRType = 0;
@@ -140,53 +140,53 @@ void GridManager::CheckNeighbours(aie::Input* input, float deltaTime)
 
 				// Neighbour Cells
 				if (!_Cells[x + 1][y + 1].GetWall())
-					TR = _Cells[x + 1][y + 1];
+					*TR = _Cells[x + 1][y + 1];
 
 				if (!_Cells[x][y + 1].GetWall())
-					TM = _Cells[x][y + 1];
+					*TM = _Cells[x][y + 1];
 
 				if (!_Cells[x - 1][y + 1].GetWall())
-					TL = _Cells[x - 1][y + 1];
+					*TL = _Cells[x - 1][y + 1];
 
 				if (!_Cells[x + 1][y].GetWall())
-					MR = _Cells[x + 1][y];
+					*MR = _Cells[x + 1][y];
 
 				if (!_Cells[x - 1][y].GetWall())
-					ML = _Cells[x - 1][y];
+					*ML = _Cells[x - 1][y];
 
 				if (!_Cells[x + 1][y - 1].GetWall())
-					BR = _Cells[x + 1][y - 1];
+					*BR = _Cells[x + 1][y - 1];
 
 				if (!_Cells[x][y - 1].GetWall())
-					BM = _Cells[x][y - 1];
+					*BM = _Cells[x][y - 1];
 
 				if (!_Cells[x - 1][y - 1].GetWall())
-					BL = _Cells[x - 1][y - 1];
+					*BL = _Cells[x - 1][y - 1];
 
 				// Get how many neighbours alive and type
-				if (TR.GetAlive())
-					_TRType = GetCellType(TR);
+				if (TR->GetAlive())
+					_TRType = GetCellType(*TR);
 										
-				if (TM.GetAlive())						
-					_TMType = GetCellType(TM);
+				if (TM->GetAlive())						
+					_TMType = GetCellType(*TM);
 										
-				if (TL.GetAlive())						
-					_TLType = GetCellType(TL);
+				if (TL->GetAlive())						
+					_TLType = GetCellType(*TL);
 										
-				if (MR.GetAlive())						
-					_MRType = GetCellType(MR);
+				if (MR->GetAlive())						
+					_MRType = GetCellType(*MR);
 										
-				if (ML.GetAlive())						
-					_MLType = GetCellType(ML);
+				if (ML->GetAlive())						
+					_MLType = GetCellType(*ML);
 										
-				if (BL.GetAlive())						
-					_BLType = GetCellType(BL);
+				if (BL->GetAlive())						
+					_BLType = GetCellType(*BL);
 										
-				if (BM.GetAlive())						
-					_BMType = GetCellType(BM);
+				if (BM->GetAlive())						
+					_BMType = GetCellType(*BM);
 									
-				if (BR.GetAlive())						
-					_BRType = GetCellType(BR);
+				if (BR->GetAlive())						
+					_BRType = GetCellType(*BR);
 
 				// Set Cells new status
 				NextGeneration(x,y);
@@ -204,8 +204,18 @@ void GridManager::NextGeneration(int x, int y)	// Rules Would be put in here
 	// Type 3: Empty	| (Black) | { _Cells[x][y].GetType() == 3 | _Type3Neighbours == int}
 
 	//Set Cell Rules
-
-	// If both sides are empty pick random side to go else if one side is empty go that side
+	if (_Cells[x][y].GetWaterTotal() > BM->GetWaterTotal())
+	{
+		if (BM->GetType() == 3)
+		{
+			BM->SetChangeType(2);
+			BM->SetType(2);
+			BM->SetWaterTotal(0);
+		}
+		BM->SetWaterTotal(BM->GetWaterTotal() + _Cells[x][y].GetWaterTotal() / 2);
+		_Cells[x][y].SetWaterTotal(_Cells[x][y].GetWaterTotal() / 2);
+	}
+	
 	
 }
 
@@ -242,10 +252,11 @@ void GridManager::Draw(aie::Renderer2D* renderer)
 			renderer->setRenderColour(_Cells[x][y].GetR(), _Cells[x][y].GetG(), _Cells[x][y].GetB());
 
 			if (_Cells[x][y].GetType() == 2 && !_Cells[x][y].GetWall())
-				renderer->drawBox(_Cells[x][y].GetX(), _Cells[x][y].GetY() + (_Cells[x][y].GetSizeY() * _Cells[x][y].GetWaterTotal()), _Cells[x][y].GetSizeX(), _Cells[x][y].GetSizeY() * _Cells[x][y].GetWaterTotal());  // Needs to be fixed
+			{
+				renderer->drawSprite(nullptr, _Cells[x][y].GetX(), _Cells[x][y].GetY(), _Cells[x][y].GetSizeX(), _Cells[x][y].GetSizeBeforeY(), 0.0f, 0.0f, 0.0f, 0.0f);  // Needs to be fixed
+			}
 			else
-				renderer->drawBox(_Cells[x][y].GetX(), _Cells[x][y].GetY(), _Cells[x][y].GetSizeX(), _Cells[x][y].GetSizeY());
-
+				renderer->drawSprite(nullptr, _Cells[x][y].GetX(), _Cells[x][y].GetY(), _Cells[x][y].GetSizeX(), _Cells[x][y].GetSizeY(), 0.0f, 0.0f, 0.0f, 0.0f);  // Needs to be fixed
 		}
 	}
 }

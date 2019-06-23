@@ -40,10 +40,12 @@ public:
 	int GetChangeType()				{ return _ChangeType; };
 	void SetChangeType(char type)	{ _ChangeType = type; };
 
-	// SizeX Functions
+	// Size Functions
 	float GetSizeX()						{ return _SizeX; };
 	float GetSizeY()						{ return _SizeY; };
+	float GetSizeBeforeY()					{ return _SizeBeforeY; };
 	void SetSize(float sizeX, float sizeY)	{ _SizeX = sizeX; _SizeY = sizeY; };
+	void setSizeBeforeY(float sizeY)		{ _SizeBeforeY = sizeY; };
 
 	// Colour Functions
 	float GetR()					{ return _R; };
@@ -63,6 +65,7 @@ private:
 	// Size Variables
 	float _SizeX;
 	float _SizeY;
+	float _SizeBeforeY;
 
 	// Colour Variables 
 	float _R;

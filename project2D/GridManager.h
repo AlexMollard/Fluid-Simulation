@@ -40,9 +40,9 @@ private:
 	int _Type3Neighbours;
 
 	// Neighbour Cells
-	Cell TR, TM, TL;
-	Cell MR, ML;
-	Cell BR, BM, BL;
+	Cell *TR, *TM, *TL;
+	Cell *MR, *ML;
+	Cell *BR, *BM, *BL;
 
 	int _TRType, _TMType, _TLType;
 	int _MRType, _MLType;
