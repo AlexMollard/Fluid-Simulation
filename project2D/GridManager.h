@@ -53,8 +53,8 @@ private:
 	int _Move;
 
 	// Cells
-	Cell** _Cells;
-	Cell _Wall;
+	Cell*** _Cells;
+	Cell* _Wall;
 
 };
 

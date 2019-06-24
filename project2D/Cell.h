@@ -9,13 +9,17 @@ public:
 	// Update Functions
 	void Update(float DeltaTime, aie::Input* input);
 	void Draw(aie::Renderer2D* renderer);
-	void MouseOver(aie::Input* input);
+	void MouseOver(aie::Input* input, float  DeltaTime);
 
 	// Postition Functions
 	void SetPos(float x, float y)	{ _CellX = x;  _CellY = y; };
 	float GetX()					{ return _CellX; };
 	float GetY()					{ return _CellY; };
 	
+	// Fall Functions
+	bool GetFall()					{ return _Fall; };
+	void SetFall(bool fall)			{ _Fall = fall; };
+
 	// Alive Functions
 	bool GetAlive()					{ return _Alive; };
 	void SetAlive(bool alive)		{ _Alive = alive; };
@@ -31,6 +35,10 @@ public:
 	// WaterFunctions
 	float GetWaterTotal()			{ return _WaterTotal; };
 	void SetWaterTotal(float Water)	{ _WaterTotal = Water; };
+
+	// ChangeWaterFunctions
+	float GetChangeWaterTotal()			{ return _ChangeWaterTotal; };
+	void SetChangeWaterTotal(float Water) { _ChangeWaterTotal = Water; };
 
 	// Type Functions
 	int GetType()					{ return _Type; };
@@ -61,6 +69,7 @@ private:
 	// Position Variables
 	float _CellX;
 	float _CellY;
+	bool _Fall;
 
 	// Size Variables
 	float _SizeX;
@@ -79,6 +88,7 @@ private:
 	// Water Variables			//	1 2 3 
 	float _WaterTotal;			//  4 X 5
 	int _Direction;				//  6 7 8 
+	float _ChangeWaterTotal;
 
 	// Wall Variable
 	bool _Wall;
