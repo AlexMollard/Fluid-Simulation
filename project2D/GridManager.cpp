@@ -1,9 +1,12 @@
 #include "GridManager.h"
+#include "Font.h"
 #include <iostream>
 using namespace std;
 
 GridManager::GridManager(int cellAmount, float windowSizeX, float windowSizeY)
 {
+	_Font = new aie::Font("./font/consolas.ttf", 0);
+
 	// Set how many cells there are
 	_CellTotal = cellAmount;
 
@@ -49,7 +52,7 @@ GridManager::GridManager(int cellAmount, float windowSizeX, float windowSizeY)
 			else
 			{
 				_Cells[x][y]->SetSurvive(false);
-				_Cells[x][y]->SetChangeType(3);
+				_Cells[x][y]->SetType(CellType_Empty);
 			}
 		}
 	}
@@ -207,120 +210,124 @@ void GridManager::NextGeneration(int x, int y)	// Rules Would be put in here
 	// Type 2: Liquid 1 | (Blue)  | { _Cells[x][y]->GetType() == 2 | _Type2Neighbours == int}
 	// Type 3: Empty	| (Black) | { _Cells[x][y]->GetType() == 3 | _Type3Neighbours == int}
 
+
 	// Gravity
-	if (BM->GetType() == 3 && _Cells[x][y]->GetType() == 2)
+	if (BM->GetType() == CellType_Empty && _Cells[x][y]->GetType() == CellType_Water)
 	{
-		BM->SetChangeType(2);
-		BM->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal());
-		_Cells[x][y]->SetChangeWaterTotal(0);
-		_Cells[x][y]->SetChangeType(3);
+		BM->SetType(CellType_Water);
+		BM->SetWaterTotal(_Cells[x][y]->GetWaterTotal());
+		_Cells[x][y]->SetWaterTotal(0);
+		_Cells[x][y]->SetType(CellType_Empty);
+
 	}
 
-	if (_Cells[x][y]->GetType() == 2 && BM->GetType() == 2)
+	// Gravity on water
+	if (_Cells[x][y]->GetType() == CellType_Water && BM->GetType() == CellType_Water)
 	{
-		if (_Cells[x][y]->GetWaterTotal() > BM->GetWaterTotal())
+		if (BM->GetWaterTotal() < 1)
 		{
-			BM->SetChangeWaterTotal(BM->GetWaterTotal() + _Cells[x][y]->GetWaterTotal());
-			_Cells[x][y]->SetChangeWaterTotal(0);
-			_Cells[x][y]->SetChangeType(3);
-		}
-		else if (TM->GetType() == 2)
-		{
-			_Cells[x][y]->SetChangeWaterTotal(TM->GetWaterTotal() + _Cells[x][y]->GetWaterTotal());
-			TM->SetChangeWaterTotal(0);
-			TM->SetChangeType(3);
+			BM->SetWaterTotal(BM->GetWaterTotal() + _Cells[x][y]->GetWaterTotal() / 2);
+			_Cells[x][y]->SetWaterTotal(_Cells[x][y]->GetWaterTotal() / 2);
+
+			if (_Cells[x][y]->GetWaterTotal() < 0.005f)
+			{
+				_Cells[x][y]->setSizeBeforeY(0);
+				_Cells[x][y]->SetFall(false);
+				_Cells[x][y]->SetWaterTotal(0);
+				_Cells[x][y]->SetType(CellType_Empty);
+			}
 		}
 	}
 	
 	
 	// ---------------
-	//if (BM->GetType() != 3 && MR->GetType() == 3 && ML->GetType() == 3 && MR->GetWaterTotal() < _Cells[x][y]->GetWaterTotal() && ML->GetWaterTotal() < _Cells[x][y]->GetWaterTotal())
+	if (BM->GetType() != CellType_Empty && MR->GetType() == CellType_Empty && ML->GetType() == CellType_Empty && MR->GetWaterTotal() < _Cells[x][y]->GetWaterTotal() && ML->GetWaterTotal() < _Cells[x][y]->GetWaterTotal())
+	{
+		MR->SetType(CellType_Water);
+		MR->SetType(CellType_Water);
+		MR->SetWaterTotal(_Cells[x][y]->GetWaterTotal() / CellType_Water);
+	
+		ML->SetType(CellType_Water);
+		ML->SetType(CellType_Water);
+		ML->SetWaterTotal(_Cells[x][y]->GetWaterTotal() / CellType_Water);
+	
+		_Cells[x][y]->SetWaterTotal(0);
+	}
+	else if (BM->GetType() != CellType_Empty && MR->GetType() == CellType_Empty && MR->GetWaterTotal() < _Cells[x][y]->GetWaterTotal())
+	{
+		MR->SetType(CellType_Water);
+		MR->SetType(CellType_Water);
+		MR->SetWaterTotal(_Cells[x][y]->GetWaterTotal() / CellType_Water);
+		_Cells[x][y]->SetWaterTotal(_Cells[x][y]->GetWaterTotal() - (_Cells[x][y]->GetWaterTotal() / CellType_Water));
+	}
+	else if (BM->GetType() != CellType_Empty && ML->GetType() == CellType_Empty && ML->GetWaterTotal() < _Cells[x][y]->GetWaterTotal())
+	{
+		ML->SetType(CellType_Water);
+		ML->SetType(CellType_Water);
+		ML->SetWaterTotal(_Cells[x][y]->GetWaterTotal() / CellType_Water);
+		_Cells[x][y]->SetWaterTotal(_Cells[x][y]->GetWaterTotal() - (_Cells[x][y]->GetWaterTotal() / CellType_Water));
+	}
+	
+	if (_Cells[x][y]->GetType() == CellType_Water)
+	{
+		if (MR->GetType() == CellType_Water && ML->GetType() == CellType_Water)									// Work on this
+		{
+				MR->SetWaterTotal(MR->GetWaterTotal() + _Cells[x][y]->GetWaterTotal() / 4);
+				ML->SetWaterTotal(ML->GetWaterTotal() + _Cells[x][y]->GetWaterTotal() / 4);
+
+				_Cells[x][y]->SetWaterTotal(_Cells[x][y]->GetWaterTotal() - _Cells[x][y]->GetWaterTotal() / 2);
+
+		}
+		if (MR->GetType() == CellType_Water && _Cells[x][y]->GetWaterTotal() > MR->GetWaterTotal())
+		{
+			MR->SetWaterTotal(MR->GetWaterTotal() + _Cells[x][y]->GetWaterTotal() / 4);
+			_Cells[x][y]->SetWaterTotal(_Cells[x][y]->GetWaterTotal() - _Cells[x][y]->GetWaterTotal() / 4);
+		}
+		if (ML->GetType() == CellType_Water && _Cells[x][y]->GetWaterTotal() > ML->GetWaterTotal())
+		{
+			ML->SetWaterTotal(ML->GetWaterTotal() + _Cells[x][y]->GetWaterTotal() / 4);
+			_Cells[x][y]->SetWaterTotal(_Cells[x][y]->GetWaterTotal() - _Cells[x][y]->GetWaterTotal() / 4);
+		}
+
+	}
+
+	//Pressure
+	if (_Cells[x][y]->GetType() == CellType_Water && _Cells[x][y]->GetWaterTotal() > TM->GetWaterTotal() && (TM->GetType() == CellType_Water || TM->GetType() == CellType_Empty))
+	{
+		TM->SetType(CellType_Water);
+		TM->SetWaterTotal((_Cells[x][y]->GetWaterTotal() * 0.5f) + TM->GetWaterTotal());
+		_Cells[x][y]->SetWaterTotal(_Cells[x][y]->GetWaterTotal() * 0.5f);
+	}
+	//else if (_Cells[x][y]->GetType() == CellType_Water && BM->GetWaterTotal() > 1 && _Cells[x][y]->GetWaterTotal() > BM->GetWaterTotal() && BM->GetType() == CellType_Water)
 	//{
-	//	MR->SetChangeType(2);
-	//	MR->SetType(2);
-	//	MR->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() / 4);
-	//
-	//	ML->SetChangeType(2);
-	//	ML->SetType(2);
-	//	ML->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() / 4);
-	//
-	//	_Cells[x][y]->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() / 2);
-	//}
-	//else if (BM->GetType() != 3 && MR->GetType() == 3 && MR->GetWaterTotal() < _Cells[x][y]->GetWaterTotal())
-	//{
-	//	MR->SetChangeType(2);
-	//	MR->SetType(2);
-	//	MR->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() / 4);
-	//	_Cells[x][y]->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() - (_Cells[x][y]->GetWaterTotal() / 4));
-	//}
-	//else if (BM->GetType() != 3 && ML->GetType() == 3 && ML->GetWaterTotal() < _Cells[x][y]->GetWaterTotal())
-	//{
-	//	ML->SetChangeType(2);
-	//	ML->SetType(2);
-	//	ML->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() / 4);
-	//	_Cells[x][y]->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() - (_Cells[x][y]->GetWaterTotal() / 4));
-	//}
-	//
-	//// Water to Water
-	////------------------------
-	//if (_Cells[x][y]->GetType() == 2 && MR->GetType() == 2 && ML->GetType() == 2 && MR->GetWaterTotal() < _Cells[x][y]->GetWaterTotal() && ML->GetWaterTotal() < _Cells[x][y]->GetWaterTotal())
-	//{
-	//
-	//
-	//	MR->SetChangeType(2);
-	//	MR->SetType(2);
-	//	MR->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() / 4);
-	//
-	//	ML->SetChangeType(2);
-	//	ML->SetType(2);
-	//	ML->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() / 4);
-	//
-	//	_Cells[x][y]->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() / 2);
-	//
-	//	//if (ML->GetWaterTotal() < MR->GetWaterTotal())
-	//	//{
-	//	//	float _Dif = _Cells[x][y]->GetWaterTotal() - MR->GetWaterTotal();
-	//	//	MR->SetChangeWaterTotal(MR->GetWaterTotal() + _Dif);
-	//	//	_Cells[x][y]->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() - _Dif);
-	//	//}
-	//	//else if (ML->GetWaterTotal() > MR->GetWaterTotal())
-	//	//{
-	//	//	float _Dif = _Cells[x][y]->GetWaterTotal() - ML->GetWaterTotal();
-	//	//	ML->SetChangeWaterTotal((ML->GetWaterTotal() + _Dif));
-	//	//	_Cells[x][y]->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() - _Dif);
-	//	//}
-	//}
-	//else if (_Cells[x][y]->GetType() == 2 && MR->GetType() == 2 && MR->GetWaterTotal() < _Cells[x][y]->GetWaterTotal() )
-	//{
-	//	float _Dif = _Cells[x][y]->GetWaterTotal() - MR->GetWaterTotal();
-	//	MR->SetChangeWaterTotal(MR->GetWaterTotal() + _Dif);
-	//	_Cells[x][y]->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() - _Dif);
-	//}
-	//else if (_Cells[x][y]->GetType() == 2 && ML->GetType() == 2 && ML->GetWaterTotal() < _Cells[x][y]->GetWaterTotal() )
-	//{
-	//	float _Dif = _Cells[x][y]->GetWaterTotal() - ML->GetWaterTotal();
-	//	ML->SetChangeWaterTotal((ML->GetWaterTotal() + _Dif));
-	//	_Cells[x][y]->SetChangeWaterTotal(_Cells[x][y]->GetWaterTotal() - _Dif);
+	//	_Cells[x][y]->SetWaterTotal(_Cells[x][y]->GetWaterTotal() * 0.5);
+	//	BM->SetWaterTotal((_Cells[x][y]->GetWaterTotal() * 0.5f) + BM->GetWaterTotal());
 	//}
 
+	// Check the sizes
+	if ((_Cells[x][y]->GetType() != CellType_Solid && _Cells[x][y]->GetType() != CellType_Wall) && _Cells[x][y]->GetWaterTotal() < 0.01f)
+	{
+		_Cells[x][y]->SetWaterTotal(0.0f);
+		_Cells[x][y]->SetType(CellType_Empty);
+	}
 
-	//if (TM->GetType() == 2 && BM->GetType() == 2)
-	//	_Cells[x][y]->SetFall(true);
-
-	//if (_Cells[x][y]->GetFall() == true)
-	//{
-	//	_Cells[x][y]->setSizeBeforeY(_CellSizeY);
-	//	_Cells[x][y]->SetFall(false);
-	//}
-	//else if (_Cells[x][y]->GetType() == 2)
-	//{
-	//	_Cells[x][y]->setSizeBeforeY(_CellSizeY * _Cells[x][y]->GetWaterTotal());
-	//	if (_Cells[x][y]->GetSizeBeforeY() < _CellSizeY)
-	//		_Cells[x][y]->setSizeBeforeY(_CellSizeY * _Cells[x][y]->GetWaterTotal());
-	//
-	//	if (_Cells[x][y]->GetSizeBeforeY() > _CellSizeY)
-	//		_Cells[x][y]->setSizeBeforeY(_CellSizeY);
-	//}
+	if (TM->GetType() == CellType_Water)
+		_Cells[x][y]->SetFall(true);
+	
+	if (_Cells[x][y]->GetFall() == true)
+	{
+		_Cells[x][y]->setSizeBeforeY(_CellSizeY);
+		_Cells[x][y]->SetFall(false);
+	}
+	else if (_Cells[x][y]->GetType() == CellType_Water)
+	{
+		_Cells[x][y]->setSizeBeforeY(_CellSizeY * _Cells[x][y]->GetWaterTotal());
+		if (_Cells[x][y]->GetSizeBeforeY() < _CellSizeY)
+			_Cells[x][y]->setSizeBeforeY(_CellSizeY * _Cells[x][y]->GetWaterTotal());
+	
+		if (_Cells[x][y]->GetSizeBeforeY() > _CellSizeY)
+			_Cells[x][y]->setSizeBeforeY(_CellSizeY);
+	}
 }
 
 int GridManager::GetCellType(Cell cell)
@@ -358,9 +365,13 @@ void GridManager::Draw(aie::Renderer2D* renderer)
 			if (_Cells[x][y]->GetType() == 2 && !_Cells[x][y]->GetWall())
 			{
 				renderer->drawSprite(nullptr, _Cells[x][y]->GetX(), _Cells[x][y]->GetY(), _Cells[x][y]->GetSizeX(), _Cells[x][y]->GetSizeBeforeY(), 0.0f, 0.0f, 0.0f, 0.0f);  // Needs to be fixed
+				//char str[10];
+				//sprintf(str, "%.4f", _Cells[x][y]->GetWaterTotal());
+				renderer->setRenderColour(8, 8, 8);
+				//renderer->drawText(_Font, str, _Cells[x][y]->GetX() + (_Cells[x][y]->GetSizeX()/20), _Cells[x][y]->GetY());
 			}
-			else
-				renderer->drawSprite(nullptr, _Cells[x][y]->GetX(), _Cells[x][y]->GetY(), _Cells[x][y]->GetSizeX(), _Cells[x][y]->GetSizeY(), 0.0f, 0.0f, 0.0f, 0.0f);  // Needs to be fixed
+			//else
+				//renderer->drawSprite(nullptr, _Cells[x][y]->GetX(), _Cells[x][y]->GetY(), _Cells[x][y]->GetSizeX(), _Cells[x][y]->GetSizeY(), 0.0f, 0.0f, 0.0f, 0.0f);  // Needs to be fixed
 		}
 	}
 }

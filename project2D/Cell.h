@@ -1,6 +1,8 @@
 #pragma once
 #include <Renderer2D.h>
 #include "Input.h"
+#include "CellTypes.h"
+
 class Cell
 {
 public:
@@ -36,17 +38,9 @@ public:
 	float GetWaterTotal()			{ return _WaterTotal; };
 	void SetWaterTotal(float Water)	{ _WaterTotal = Water; };
 
-	// ChangeWaterFunctions
-	float GetChangeWaterTotal()			{ return _ChangeWaterTotal; };
-	void SetChangeWaterTotal(float Water) { _ChangeWaterTotal = Water; };
-
 	// Type Functions
 	int GetType()					{ return _Type; };
-	void SetType(char type)			{ _Type = type; };
-
-	// ChangeType Functions
-	int GetChangeType()				{ return _ChangeType; };
-	void SetChangeType(char type)	{ _ChangeType = type; };
+	void SetType(CellType type)			{ _Type = type; };
 
 	// Size Functions
 	float GetSizeX()						{ return _SizeX; };
@@ -82,13 +76,10 @@ private:
 	float _B;
 
 	// Type Variables
-	int _Type;
-	int _ChangeType;
-								// Directions in int value
-	// Water Variables			//	1 2 3 
-	float _WaterTotal;			//  4 X 5
-	int _Direction;				//  6 7 8 
-	float _ChangeWaterTotal;
+	CellType _Type;
+								
+	// Water Variables			
+	float _WaterTotal;						
 
 	// Wall Variable
 	bool _Wall;

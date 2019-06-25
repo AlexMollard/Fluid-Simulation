@@ -180,6 +180,7 @@
     <ClInclude Include="Application2D.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="GridManager.h" />
+    <ClInclude Include="CellTypes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

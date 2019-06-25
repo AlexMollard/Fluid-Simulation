@@ -13,14 +13,12 @@ Cell::Cell()
 	_CellX = 0.0f;
 	_CellY = 0.0f;
 	_Survive = true;
-	_Type = 1;
+	_Type = CellType_Empty;
 	_Timer = 0;
 	_Wall = false;
-	_ChangeType = 0;
 	_WaterTotal = 0;
 	_SizeBeforeY = 0;
 	_Fall = false;
-	_ChangeWaterTotal = 0;
 }
 
 void Cell::Draw(aie::Renderer2D* renderer)
@@ -31,28 +29,34 @@ void Cell::Update(float DeltaTime, aie::Input* input)
 {
 	_Timer += DeltaTime * 10;
 
-	_Type = _ChangeType;
-	_WaterTotal = _ChangeWaterTotal;
-
 	MouseOver(input, DeltaTime);
+
+	if (_WaterTotal < 0.0001f && _Type == CellType_Water)
+	{
+		_WaterTotal = 0;
+		_Type = CellType_Empty;
+	}
+
+
 
 
 	// Set colour for each type of cell
 	if (_Wall)
 	{
-		_R = 1.0f;
-		_G = 1.0f;
-		_B = 1.0f;
-		_ChangeWaterTotal = 0;
+		_R = 0.2f;
+		_G = 0.2f;
+		_B = 0.2f;
+		_WaterTotal = 0;
+		_Type = CellType_Solid;
 	}
-	else if (_Alive && _Type == 1)	// Solid
+	else if (_Alive && _Type == CellType_Solid)	// Solid
 	{
 		_R = 0.4f;
 		_G = 0.4f;
 		_B = 0.4f;
-		_ChangeWaterTotal = 0;
+		_WaterTotal = 0;
 	}
-	else if (_Alive && _Type == 2)	// Water
+	else if (_Alive && _Type == CellType_Water)	// Water
 	{
 		if (_SizeBeforeY < _SizeY)
 			_SizeBeforeY = _SizeY * _WaterTotal;
@@ -76,12 +80,12 @@ void Cell::Update(float DeltaTime, aie::Input* input)
 		if (_G > 0.8)
 			_G = 0.8;
 	}
-	else if (_Alive && _Type == 3)	// Empty
+	else if (_Alive && _Type == CellType_Empty)	// Empty
 	{
 		_R = 0.10f;
 		_G = 0.108f;
 		_B = 0.178f;
-		_ChangeWaterTotal = 0;
+		_WaterTotal = 0;
 	}
 
 }
@@ -95,23 +99,23 @@ void Cell::MouseOver(aie::Input* input, float DeltaTime)
 			input->getMouseY() >= _CellY && input->getMouseY() <= _CellY + (_SizeY))
 		{
 			if (input->isKeyDown(aie::INPUT_KEY_LEFT_SHIFT))
-				_ChangeType = 3;
+				_Type = CellType_Empty;
 			else
-				_ChangeType = 1;
+				_Type = CellType_Solid;
 		}
 	}// Water Cell
 	else if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_RIGHT))
 	{
-		if (input->getMouseX() >= _CellX && input->getMouseX() <= _CellX + (_SizeX) &&
-			input->getMouseY() >= _CellY && input->getMouseY() <= _CellY + (_SizeY))
+		if (input->getMouseX() >= _CellX && input->getMouseX() <= _CellX + (_SizeX * 4) &&
+			input->getMouseY() >= _CellY && input->getMouseY() <= _CellY + (_SizeY * 4))
 		{
 			if (input->isKeyDown(aie::INPUT_KEY_LEFT_SHIFT))
-				_ChangeType = 3;
+				_Type = CellType_Empty;
 			else
 			{
-				_ChangeType = 2;
+				_Type = CellType_Water;
 				_SizeBeforeY = 0;
-				_ChangeWaterTotal += 40 * DeltaTime;
+				_WaterTotal += 100.0f * DeltaTime;
 			}
 		}
 	}

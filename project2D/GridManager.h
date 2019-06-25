@@ -56,5 +56,7 @@ private:
 	Cell*** _Cells;
 	Cell* _Wall;
 
+	//Font
+	aie::Font*			_Font;
 };
 

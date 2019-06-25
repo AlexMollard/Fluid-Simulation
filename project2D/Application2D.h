@@ -16,7 +16,7 @@ public:
 	virtual void draw();
 
 protected:
-
+	aie::Font*			_Font;
 	aie::Renderer2D*	_2dRenderer;
 	GridManager*		_GridManager;
 };

@@ -18,7 +18,9 @@ bool Application2D::startup() {
 
 	_2dRenderer = new aie::Renderer2D();
 
-	_GridManager = new GridManager(20, getWindowWidth() ,getWindowHeight());
+	_Font = new aie::Font("./font/consolas.ttf", 32);
+
+	_GridManager = new GridManager(100, getWindowWidth() ,getWindowHeight());
 
 	setBackgroundColour(0.10f, 0.108f, 0.178f);
 
@@ -29,6 +31,7 @@ void Application2D::shutdown()
 {
 	delete _2dRenderer;
 	delete _GridManager;
+	delete _Font;
 }
 
 void Application2D::update(float deltaTime) 
