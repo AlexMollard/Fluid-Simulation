@@ -370,8 +370,8 @@ void GridManager::Draw(aie::Renderer2D* renderer)
 				renderer->setRenderColour(8, 8, 8);
 				//renderer->drawText(_Font, str, _Cells[x][y]->GetX() + (_Cells[x][y]->GetSizeX()/20), _Cells[x][y]->GetY());
 			}
-			//else
-				//renderer->drawSprite(nullptr, _Cells[x][y]->GetX(), _Cells[x][y]->GetY(), _Cells[x][y]->GetSizeX(), _Cells[x][y]->GetSizeY(), 0.0f, 0.0f, 0.0f, 0.0f);  // Needs to be fixed
+			else
+				renderer->drawSprite(nullptr, _Cells[x][y]->GetX(), _Cells[x][y]->GetY(), _Cells[x][y]->GetSizeX(), _Cells[x][y]->GetSizeY(), 0.0f, 0.0f, 0.0f, 0.0f);  // Needs to be fixed
 		}
 	}
 }

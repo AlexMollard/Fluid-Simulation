@@ -54,6 +54,7 @@ private:
 
 	// Cells
 	Cell*** _Cells;
+	Cell*** _DisplayedCells;
 	Cell* _Wall;
 
 	//Font

@@ -20,7 +20,7 @@ bool Application2D::startup() {
 
 	_Font = new aie::Font("./font/consolas.ttf", 32);
 
-	_GridManager = new GridManager(100, getWindowWidth() ,getWindowHeight());
+	_GridManager = new GridManager(20, getWindowWidth() ,getWindowHeight());
 
 	setBackgroundColour(0.10f, 0.108f, 0.178f);
 

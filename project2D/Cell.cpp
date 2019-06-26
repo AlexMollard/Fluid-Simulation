@@ -106,8 +106,8 @@ void Cell::MouseOver(aie::Input* input, float DeltaTime)
 	}// Water Cell
 	else if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_RIGHT))
 	{
-		if (input->getMouseX() >= _CellX && input->getMouseX() <= _CellX + (_SizeX * 4) &&
-			input->getMouseY() >= _CellY && input->getMouseY() <= _CellY + (_SizeY * 4))
+		if (input->getMouseX() >= _CellX && input->getMouseX() <= _CellX + (_SizeX) &&
+			input->getMouseY() >= _CellY && input->getMouseY() <= _CellY + (_SizeY))
 		{
 			if (input->isKeyDown(aie::INPUT_KEY_LEFT_SHIFT))
 				_Type = CellType_Empty;
@@ -115,7 +115,7 @@ void Cell::MouseOver(aie::Input* input, float DeltaTime)
 			{
 				_Type = CellType_Water;
 				_SizeBeforeY = 0;
-				_WaterTotal += 100.0f * DeltaTime;
+				_WaterTotal += 10.0f * DeltaTime;
 			}
 		}
 	}
