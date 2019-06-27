@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GridManager.cpp">
+    <ClCompile Include="Game2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CellManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Cell.cpp">
@@ -29,16 +29,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application2D.h">
+    <ClInclude Include="Game2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GridManager.h">
+    <ClInclude Include="CellManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Cell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CellTypes.h">
+    <ClInclude Include="CellType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

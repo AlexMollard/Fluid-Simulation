@@ -1,48 +1,69 @@
+//----------------------------------------------------------------------------
+// This class is used to load textures for drawing as sprites.
+// 
+// Example Usage:
+//		When loading sprites use:
+//		aie::Texture texture = new aie::Texture("./textures/ship.png");
+//
+//		When loading textures to apply to 3D models instead use:
+//		aie::Texture texture = new aie::Texture("./textures/wall.png", GL_LINEAR);
+//----------------------------------------------------------------------------
 #pragma once
 
 #include <string>
 
-namespace aie {
+namespace aie 
+{
 
-// a class for wrapping up an opengl texture image
-class Texture {
+class Texture 
+{
 public:
-
-	enum Format : unsigned int {
-		RED	= 1,
+	enum Format : unsigned int 
+	{
+		NONE = 0,
+		RED,
 		RG,
 		RGB,
 		RGBA
 	};
 
+	enum Filtering : unsigned int
+	{
+		FILTER_NEAREST,
+		FILTER_LINEAR
+	};
+
 	Texture();
-	Texture(const char* filename);
-	Texture(unsigned int width, unsigned int height, Format format, unsigned char* pixels = nullptr);
+	Texture(const char* filename, Filtering filter = FILTER_NEAREST);
+	Texture(unsigned int width, unsigned int height, Format format, unsigned char* pixels = nullptr, Filtering filter = FILTER_NEAREST);
 	virtual ~Texture();
 
-	// load a jpg, bmp, png or tga
-	bool load(const char* filename);
+	// Load a jpg, bmp, png, or tga.
+	bool Load(const char* filename, Filtering filter);
+	void Unload();
 
-	// creates a texture that can be filled in with pixels
-	void create(unsigned int width, unsigned int height, Format format, unsigned char* pixels = nullptr);
+	// Creates a texture that can be filled with pixels.
+	void Create(unsigned int width, unsigned int height, Format format, unsigned char* pixels = nullptr, Filtering filter = FILTER_NEAREST);
 
-	// returns the filename or "none" if not loaded from a file
-	const std::string& getFilename() const { return m_filename; }
+	// Returns the filename or nullptr if not loaded from a file.
+	const char* GetFilename() const { return m_filename; }
 
-	// binds the texture to the specified slot
-	void bind(unsigned int slot) const;
+	// Binds the texture to the specified slot.
+	void Bind(unsigned int slot) const;
 
-	// returns the opengl texture handle
-	unsigned int getHandle() const { return m_glHandle; }
+	// Returns the OpenGL texture handle.
+	unsigned int GetHandle() const { return m_glHandle; }
 
-	unsigned int getWidth() const { return m_width; }
-	unsigned int getHeight() const { return m_height; }
-	unsigned int getFormat() const { return m_format; }
-	const unsigned char* getPixels() const { return m_loadedPixels; }
+	// Get the texture's properties.
+	unsigned int GetWidth() const { return m_width; }
+	unsigned int GetHeight() const { return m_height; }
+	unsigned int GetFormat() const { return m_format; }
+
+	// Get the pixel data from the texture.
+	const unsigned char* GetPixels() const { return m_loadedPixels; }
 
 protected:
-
-	std::string		m_filename;
+	char*			m_filename;
 	unsigned int	m_width;
 	unsigned int	m_height;
 	unsigned int	m_glHandle;

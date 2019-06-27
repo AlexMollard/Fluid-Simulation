@@ -2,165 +2,190 @@
 #include "gl_core_4_4.h"
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <iostream>
-#include "Input.h"
-#include "imgui_glfw3.h"
 
-namespace aie {
+namespace aie 
+{
 
-Application::Application()
-	: m_window(nullptr),
-	m_gameOver(false),
-	m_fps(0) {
+Application* Application::m_instance = nullptr;
+
+Application::Application(const char* title, int width, int height, bool fullscreen)
+{
+	// Create the game window.
+	m_window = CreateGameWindow(title, width, height, fullscreen);
+
+	// Initialise variables.
+	m_gameOver = false;
+	m_fps = 0;
+	m_frames = 0;
+	m_deltaTime = 0;
+	m_fpsInterval = 0;
+	m_prevTime = GetTime();
 }
 
-Application::~Application() {
+Application::~Application() 
+{
+	if (m_window)
+		DestroyGameWindow();
 }
 
-bool Application::createWindow(const char* title, int width, int height, bool fullscreen) {
+void Application::Create(const char* title, int width, int height, bool fullscreen)
+{ 
+	if(!m_instance)
+		m_instance = new Application(title, width, height, fullscreen); 
+}
 
+void Application::Destroy()
+{ 
+	delete m_instance; 
+	m_instance = nullptr;
+}
+
+void Application::Update()
+{
+	// Update delta time.
+	double currTime = GetTime();
+	m_deltaTime = currTime - m_prevTime;
+	m_prevTime = currTime;
+
+	// Update fps every second.
+	m_frames++;
+	m_fpsInterval += m_deltaTime;
+	if (m_fpsInterval >= 1.0f)
+	{
+		m_fps = m_frames;
+		m_frames = 0;
+		m_fpsInterval -= 1.0f;
+	}
+
+	// Update window events (input etc).
+	glfwPollEvents();
+
+	// Should the game exit?
+	m_gameOver = m_gameOver || HasWindowClosed();
+}
+
+// Create the game window using the GLFW library
+GLFWwindow* Application::CreateGameWindow(const char* title, int width, int height, bool fullscreen)
+{
+	// Load GLFW and make sure it loads successfully.
 	if (glfwInit() == GL_FALSE)
-		return false;
+		return nullptr;
 
-	m_window = glfwCreateWindow(width, height, title, (fullscreen ? glfwGetPrimaryMonitor() : nullptr), nullptr);
-	if (m_window == nullptr) {
+	// If the application is fullscreen then we will display in on the primary screen.
+	GLFWmonitor* screen = nullptr;
+	if (fullscreen)
+		screen = glfwGetPrimaryMonitor();
+
+	// Create the window
+	GLFWwindow* window = glfwCreateWindow(width, height, title, screen, nullptr);
+	if (!window) 
+	{
 		glfwTerminate();
-		return false;
+		return nullptr;
 	}
 
-	glfwMakeContextCurrent(m_window);
+	// Set the window to be the current "context" (the window to use for our game).
+	glfwMakeContextCurrent(window);
 
-	if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
-		glfwDestroyWindow(m_window);
+	// Load the OpenGL functions and check that they loaded successfully.
+	if (ogl_LoadFunctions() == ogl_LOAD_FAILED) 
+	{
+		glfwDestroyWindow(window);
 		glfwTerminate();
-		return false;
+		return nullptr;
 	}
 
-	glfwSetWindowSizeCallback(m_window, [](GLFWwindow*, int w, int h){ glViewport(0, 0, w, h); });
+	// Assign a Lambda function to be called whenever the window is resized.
+	glfwSetWindowSizeCallback(window, [](GLFWwindow*, int w, int h){ glViewport(0, 0, w, h); });
 
+	// Setup the basic rendering settings.
 	glClearColor(0, 0, 0, 1);
-
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	// start input manager
-	Input::create();
-
-	// imgui
-	ImGui_Init(m_window, true);
 	
-	return true;
+	return window;
 }
 
-void Application::destroyWindow() {
-
-	ImGui_Shutdown();
-	Input::destroy();
-
+// Destroy the game window
+void Application::DestroyGameWindow()
+{
+	//Shut down GLFW
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
 }
 
-void Application::run(const char* title, int width, int height, bool fullscreen) {
-
-	// start game loop if successfully initialised
-	if (createWindow(title,width,height, fullscreen) &&
-		startup()) {
-
-		// variables for timing
-		double prevTime = glfwGetTime();
-		double currTime = 0;
-		double deltaTime = 0;
-		unsigned int frames = 0;
-		double fpsInterval = 0;
-
-		// loop while game is running
-		while (!m_gameOver) {
-
-			// update delta time
-			currTime = glfwGetTime();
-			deltaTime = currTime - prevTime;
-			prevTime = currTime;
-
-			// clear input
-			Input::getInstance()->clearStatus();
-
-			// update window events (input etc)
-			glfwPollEvents();
-
-			// skip if minimised
-			if (glfwGetWindowAttrib(m_window, GLFW_ICONIFIED) != 0)
-				continue;
-
-			// update fps every second
-			frames++;
-			fpsInterval += deltaTime;
-			if (fpsInterval >= 1.0f) {
-				m_fps = frames;
-				frames = 0;
-				fpsInterval -= 1.0f;
-			}
-
-			// clear imgui
-			ImGui_NewFrame();
-
-			update(float(deltaTime));
-
-			draw();
-
-			// draw IMGUI last
-			ImGui::Render();
-
-			//present backbuffer to the monitor
-			glfwSwapBuffers(m_window);
-
-			// should the game exit?
-			m_gameOver = m_gameOver || glfwWindowShouldClose(m_window) == GLFW_TRUE;
-		}
-	}
-
-	// cleanup
-	shutdown();
-	destroyWindow();
-}
-
-bool Application::hasWindowClosed() {
+// Returns whether the window has been closed by the user.
+bool Application::HasWindowClosed() 
+{
 	return glfwWindowShouldClose(m_window) == GL_TRUE;
 }
 
-void Application::clearScreen() {
+// Clear the screen so that it's ready to render.
+void Application::ClearScreen() 
+{
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-void Application::setBackgroundColour(float r, float g, float b, float a) {
+void Application::SwapBuffers()
+{
+	glfwSwapBuffers(m_window);
+}
+
+// The background will be cleared to this colour when ClearScreen() is called.
+void Application::SetBackgroundColour(float r, float g, float b, float a) 
+{
 	glClearColor(r, g, b, a);
 }
 
-void Application::setVSync(bool enable) {
+// Enable or disable V-Sync.
+void Application::SetVSync(bool enable) 
+{
 	glfwSwapInterval(enable ? 1 : 0);
 }
 
-void Application::setShowCursor(bool visible) {
+// Enable or disable backface culling.
+// Usually you want this off for 2D and on for 3D.
+void Application::SetBackfaceCull(bool enabled)
+{
+	if(enabled)
+		glEnable(GL_CULL_FACE);
+	else
+		glDisable(GL_CULL_FACE);
+}
+
+// Hide or show the OS cursor.
+void Application::SetShowCursor(bool visible)
+{
 	ShowCursor(visible);
 }
 
-unsigned int Application::getWindowWidth() const {
+// Get the current width of the window.
+unsigned int Application::GetWindowWidth() const 
+{
 	int w = 0, h = 0;
 	glfwGetWindowSize(m_window, &w, &h);
 	return w;
 }
 
-unsigned int Application::getWindowHeight() const {
+// Get the current height of the window.
+unsigned int Application::GetWindowHeight() const 
+{
 	int w = 0, h = 0;
 	glfwGetWindowSize(m_window, &w, &h);
 	return h;
 }
 
-float Application::getTime() const {
+// Get the time since the application started.
+float Application::GetTime() const 
+{
 	return (float)glfwGetTime();
+}
+
+// Returns whether the application is minimised.
+bool Application::GetMinimised() const
+{
+	return (glfwGetWindowAttrib(m_window, GLFW_ICONIFIED) != 0);
 }
 
 } // namespace aie

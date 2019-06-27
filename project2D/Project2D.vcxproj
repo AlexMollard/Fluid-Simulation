@@ -171,16 +171,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Application2D.cpp" />
     <ClCompile Include="Cell.cpp" />
-    <ClCompile Include="GridManager.cpp" />
+    <ClCompile Include="CellManager.cpp" />
+    <ClCompile Include="Game2D.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application2D.h" />
     <ClInclude Include="Cell.h" />
-    <ClInclude Include="GridManager.h" />
-    <ClInclude Include="CellTypes.h" />
+    <ClInclude Include="CellManager.h" />
+    <ClInclude Include="CellType.h" />
+    <ClInclude Include="Game2D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
