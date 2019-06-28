@@ -1,1 +1,8 @@
-﻿
+﻿  Game2D.cpp
+c:\users\alexm\desktop\aiebootstrap-2019beta\project2d\watersimulation.h(43): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Generating code
+  1 of 1305 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Project2D.vcxproj -> C:\Users\alexm\Desktop\aieBootstrap-2019beta\temp\Project2D\x64\Release\Project2D.exe

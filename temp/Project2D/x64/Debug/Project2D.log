@@ -1,8 +1,10 @@
-﻿  CellManager.cpp
-c:\users\alexm\desktop\water simulation\project2d\cellmanager.cpp(24): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\alexm\desktop\water simulation\project2d\cellmanager.cpp(25): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\alexm\desktop\water simulation\project2d\cellmanager.cpp(243): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\alexm\desktop\water simulation\project2d\cellmanager.cpp(244): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\alexm\desktop\water simulation\project2d\cellmanager.cpp(330): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+﻿  WaterSimulation.cpp
+c:\users\alexm\desktop\aiebootstrap-2019beta\project2d\watersimulation.h(42): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\alexm\desktop\aiebootstrap-2019beta\project2d\watersimulation.cpp(205): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\alexm\desktop\aiebootstrap-2019beta\project2d\watersimulation.cpp(206): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\alexm\desktop\aiebootstrap-2019beta\project2d\watersimulation.cpp(267): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\alexm\desktop\aiebootstrap-2019beta\project2d\watersimulation.cpp(274): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\alexm\desktop\aiebootstrap-2019beta\project2d\watersimulation.cpp(277): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\alexm\desktop\aiebootstrap-2019beta\project2d\watersimulation.cpp(282): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(1774): note: see declaration of 'sprintf'
-  Project2D.vcxproj -> C:\Users\alexm\Desktop\Water Simulation\temp\Project2D\x64\Debug\Project2D.exe
+  Project2D.vcxproj -> C:\Users\alexm\Desktop\aieBootstrap-2019beta\temp\Project2D\x64\Debug\Project2D.exe

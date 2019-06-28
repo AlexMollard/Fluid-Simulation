@@ -1,7 +1,7 @@
 #pragma once
+#include "WaterSimulation.h"
 #include "Game.h"
 #include "Renderer2D.h"
-#include "CellManager.h"
 
 class Game2D : public aie::Game
 {
@@ -13,7 +13,9 @@ public:
 	virtual void Draw();
 
 protected:
-	aie::Renderer2D*	_2dRenderer;
-	aie::Font*			_font;
-	CellManager*		_CellManager;
+	aie::Renderer2D*	m_2dRenderer;
+
+	aie::Font*			m_font;
+
+	WaterSimulation* _WaterSim;
 };
